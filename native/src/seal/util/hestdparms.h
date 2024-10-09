@@ -25,7 +25,7 @@ namespace seal
             case std::size_t(2048):
                 return 54;
             case std::size_t(4096):
-                return 109;
+                return 192;     // change to 64 * 3. As long as the security level is above 100 bits, we are good.
             case std::size_t(8192):
                 return 218;
             case std::size_t(16384):

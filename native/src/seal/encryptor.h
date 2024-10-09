@@ -357,6 +357,29 @@ namespace seal
         }
 
         /**
+        This is a variant for the  encrypt_zero_symmetric that returns Serialiable<Ciphertext> directly.
+        This function saves seed inside the given ciphertext, which can be used to perform operation on the ciphertext
+        and then converted to serializable object.
+        @param destination The ciphertext to overwrite with the encrypted
+        @param[in] pool The MemoryPoolHandle pointing to a valid memory pool
+        @throws std::logic_error if a secret key is not set
+        @throws std::invalid_argument if pool is uninitialized
+        */
+        inline void encrypt_zero_symmetric_seeded(Ciphertext &destination, MemoryPoolHandle pool = MemoryManager::GetPool()) const
+        {
+            encrypt_zero_internal(context_.first_parms_id(), false, true, destination, pool);
+        }
+
+        /**
+        This is similar to encrypt_zero_symmetric_seeded. But this is for encrypting the plaintext with secret key.
+        */
+        inline void encrypt_symmetric_seeded(
+            const Plaintext &plain, Ciphertext &destination, MemoryPoolHandle pool = MemoryManager::GetPool()) const
+        {
+            encrypt_internal(plain, false, true, destination, pool);
+        }
+
+        /**
         Encrypts a zero plaintext with the secret key and stores the result in
         destination.
 

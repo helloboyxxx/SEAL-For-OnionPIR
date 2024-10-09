@@ -110,5 +110,20 @@ namespace seal
         void encrypt_zero_symmetric(
             const SecretKey &secret_key, const SEALContext &context, parms_id_type parms_id, bool is_ntt_form,
             bool save_seed, Ciphertext &destination);
+
+        /**
+        This serves Onion-PIR for creating the seeded RGSW-ciphertext. For the last l rows, we need
+        ( -as+ e, a + sB ) \equiv (-a's + e, a' + sB) \equiv ( -(a - sB)s + e, a ), by observing a' = a - sB is also
+        uniformly at random.
+        @param secret_key The secret key used for encryption
+        @param B A vector of constant (scalar) multipliers, one for each coefficient.
+        @param context The SEALContext containing a chain of ContextData
+        @param parms_id Indicates the level of encryption
+        @param is_ntt_form If true, store ciphertext in NTT form
+        @param destination The output ciphertext, with seed stored in c_1.
+        */
+        void prepare_seeded_gsw_key(
+            const SecretKey &secret_key, const std::vector<uint64_t> &B, const SEALContext &context, parms_id_type parms_id, bool is_ntt_form,
+            Ciphertext &destination);
     } // namespace util
 } // namespace seal
