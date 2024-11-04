@@ -67,6 +67,36 @@ message(STATUS "SEAL_USE_CXX17: ${SEAL_USE_CXX17}")
 # Enable features from C++17 if available, disable features if set to OFF.
 include(EnableCXX17)
 
+# automatically enables all available optimizations for your local machine, including AVX2 and AVX512
+set(CMAKE_CXX_FLAGS "-g -O3 -std=c++17 -MD -march=native")
+
+option(NOAVX512 "Disable AVX-512" OFF)
+option(NOAVX2 "Disable AVX2" OFF)
+if (NOAVX512)
+    message("Disabling AVX-512")
+    add_compile_options(-mno-avx512f)
+else()
+    # Enable AVX-512 IFMA if available
+    include(CheckCXXCompilerFlag)
+    check_cxx_compiler_flag("-mavx512ifma" COMPILER_SUPPORTS_AVX512IFMA)
+    if (COMPILER_SUPPORTS_AVX512IFMA)
+        message("Enabling AVX-512 IFMA support")
+        add_compile_options(-mavx512ifma)
+        add_definitions(-DHEXL_HAS_AVX512IFMA)
+    else()
+        message("AVX-512 IFMA not supported on this hardware")
+    endif()
+endif()
+
+
+if (NOAVX2)
+    message("Disabling AVX2")
+    add_compile_options(-mno-avx2)
+endif()
+
+
+
+
 # Enable security-related compile options (MSVC only)
 set(SEAL_SECURE_COMPILE_OPTIONS_OPTIONS_STR "Enable Control Flow Guard and Spectre mitigations (MSVC only)")
 option(SEAL_SECURE_COMPILE_OPTIONS ${SEAL_SECURE_COMPILE_OPTIONS_OPTIONS_STR} OFF)
@@ -141,7 +171,7 @@ endif()
 
 # [option] SEAL_USE_MSGSL (default: ON)
 set(SEAL_USE_MSGSL_OPTION_STR "Use Microsoft GSL")
-option(SEAL_USE_MSGSL ${SEAL_USE_MSGSL_OPTION_STR} ON)
+option(SEAL_USE_MSGSL ${SEAL_USE_MSGSL_OPTION_STR} OFF)
 message(STATUS "SEAL_USE_MSGSL: ${SEAL_USE_MSGSL}")
 
 if(SEAL_USE_MSGSL)
@@ -215,7 +245,7 @@ endif()
 
 # [option] SEAL_USE_INTEL_HEXL (default: OFF)
 set(SEAL_USE_INTEL_HEXL_OPTION_STR "Use Intel HEXL library")
-option(SEAL_USE_INTEL_HEXL ${SEAL_USE_INTEL_HEXL_OPTION_STR} OFF)
+option(SEAL_USE_INTEL_HEXL ${SEAL_USE_INTEL_HEXL_OPTION_STR} ON)
 message(STATUS "SEAL_USE_INTEL_HEXL: ${SEAL_USE_INTEL_HEXL}")
 
 if(SEAL_USE_INTEL_HEXL)
