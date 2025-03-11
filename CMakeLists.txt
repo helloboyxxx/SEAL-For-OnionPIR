@@ -70,6 +70,9 @@ include(EnableCXX17)
 # automatically enables all available optimizations for your local machine, including AVX2 and AVX512
 set(CMAKE_CXX_FLAGS "-g -O3 -std=c++17 -MD -march=native")
 
+# Enable compile commands for IDEs
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
 option(NOAVX512 "Disable AVX-512" OFF)
 option(NOAVX2 "Disable AVX2" OFF)
 if (NOAVX512)
